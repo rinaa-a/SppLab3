@@ -19,9 +19,7 @@
         <Style TargetType="{x:Type TreeView}" BasedOn="{StaticResource baseStyle}">
             <Setter Property="FontStyle" Value="Italic"></Setter>
         </Style>
-        <Style TargetType="{x:Type TreeViewItem}" BasedOn="{StaticResource baseStyle}">
-            <Setter Property="Background" Value="WhiteSmoke"></Setter>
-        </Style>
+
         <Style TargetType="{x:Type MenuItem}" BasedOn="{StaticResource baseStyle}"></Style>
     </Window.Resources>
     <DockPanel LastChildFill="True">

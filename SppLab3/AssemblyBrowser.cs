@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
 namespace SppLab3
 {
+    
     public static class AssemblyBrowser
     {
         public static AssemblyData GetAssemblyData(string path)
@@ -36,17 +38,16 @@ namespace SppLab3
 
                 classes.ForEach(c =>
                 {
-                    var extensionMethods = c.GetMethods().Where(m => m.IsDefined(typeof(ExtensionAttribute), false)).ToList();
-                    extensionMethods.ForEach(em =>
-                    {
-                        ClassData extendedClass = null;
-                        assemblyData.Namespaces.ToList().ForEach(n =>
-                            extendedClass = n.Classes.First(c => c.Name == em.GetParameters()[0].ParameterType.ToString()));
-                        extendedClass?.Members.First(m => m.Name == "Methods").Items.Add(em.ToString());
-                    });
+                    c.GetMethods().Where(m => m.IsDefined(typeof(ExtensionAttribute), false)).ToList()
+                         .ForEach(em =>
+                {
+                    assemblyData.Namespaces.ToList().ForEach(n =>
+                        n.Classes.First(c => c.Name == em.GetParameters()[0].ParameterType.Name)
+                        ?.Members.First(m => m.Name == "Methods")
+                        .Items.Add("Extension:" + em.ToString()));
+                });
                 });
             });
-
 
             return assemblyData;
         }
