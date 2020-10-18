@@ -23,6 +23,7 @@ namespace AssemblyBrowser
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = new ViewModel(new Model());
         }
     }
 }

@@ -5,13 +5,13 @@ using System.Runtime.CompilerServices;
 
 namespace SppLab3
 {
-    public class AssemblyBrowser
+    public static class AssemblyBrowser
     {
-        public AssemblyData GetAssemblyData(string path)
+        public static AssemblyData GetAssemblyData(string path)
         {
             Assembly assembly = Assembly.LoadFrom(path);
             AssemblyData assemblyData = new AssemblyData(assembly.GetName().Name);
-            var namespaces = assembly.GetTypes().Select(type => type.Namespace).Distinct().ToList();
+            var namespaces = assembly.GetTypes().Select(type => type.Namespace).Distinct().ToList().Where(n => n != null).ToList();
             namespaces.ForEach(n =>
             {
                 NamespaceData namespaceData = new NamespaceData(n);
@@ -19,7 +19,7 @@ namespace SppLab3
 
                 var classes = assembly.GetTypes().Where(type => type.IsClass && type.Namespace == n).ToList();
 
-                classes.ForEach(c => 
+                classes.ForEach(c =>
                 {
                     ClassData classData = new ClassData(c.Name);
                     namespaceData.Classes.Add(classData);
@@ -29,9 +29,9 @@ namespace SppLab3
                     var methods = c.GetMethods(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance)
                         .Where(m => !m.IsDefined(typeof(ExtensionAttribute))).ToList();
 
-                    fields.ForEach(f => classData.Members.First(m => m.Name == "Fields").Items.Add(f.Name));
-                    properties.ForEach(p => classData.Members.First(m => m.Name == "Properties").Items.Add(p.Name));
-                    methods.ForEach(method => classData.Members.First(m => m.Name == "Methods").Items.Add(method.Name));
+                    fields.ForEach(f => classData.Members.First(m => m.Name == "Fields").Items.Add(f.ToString()));
+                    properties.ForEach(p => classData.Members.First(m => m.Name == "Properties").Items.Add(p.ToString()));
+                    methods.ForEach(method => classData.Members.First(m => m.Name == "Methods").Items.Add(method.ToString()));
                 });
 
                 classes.ForEach(c =>
@@ -42,10 +42,11 @@ namespace SppLab3
                         ClassData extendedClass = null;
                         assemblyData.Namespaces.ToList().ForEach(n =>
                             extendedClass = n.Classes.First(c => c.Name == em.GetParameters()[0].ParameterType.ToString()));
-                        extendedClass?.Members.First(m => m.Name == "Methods").Items.Add(em.Name);
+                        extendedClass?.Members.First(m => m.Name == "Methods").Items.Add(em.ToString());
                     });
                 });
             });
+
 
             return assemblyData;
         }
